@@ -1,0 +1,641 @@
+Mplus VERSION 8.6 (Mac)
+MUTHEN & MUTHEN
+11/16/2024  11:00 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE: Comparing the effects of SC and USC variability on DERS with Negative Affect;
+
+  DATA:
+    FILE = ema_daily_data.dat;               ! Input the daily data file
+
+  VARIABLE:
+    NAMES = user_num day_win LOGV_SC LOGV_USC MEAN_NAF DERS;  ! Names of variables in the .d
+    USEVARIABLES = LOGV_SC LOGV_USC MEAN_NAF DERS;            ! Variables used in the analys
+    CLUSTER = user_num;                                      ! Cluster by user (Level-2)
+
+  ANALYSIS:
+    TYPE = TWOLEVEL RANDOM;                                  ! Multilevel random effects mod
+    ESTIMATOR = BAYES;                                       ! Use Bayesian estimation
+    CHAINS = 3;                                              ! Number of MCMC chains
+    BITERATIONS = 100000 (5000);                             ! Max iterations and burn-in
+    PROCESSORS = 2;                                          ! Parallel processing for speed
+
+  MODEL:
+    %WITHIN%
+      ! Specify within-level relationships
+      DERS ON LOGV_SC (beta_SC);                             ! Effect of SC variability on D
+      DERS ON LOGV_USC (beta_USC);                           ! Effect of USC variability on
+      DERS ON MEAN_NAF (beta_NAF);                             ! Control for Negative Affect
+
+    %BETWEEN%
+      ! Specify between-level relationships
+      LOGV_SC (phi_SC);                                      ! Between-level variance of SC
+      LOGV_USC (phi_USC);                                    ! Between-level variance of USC
+      DERS ON LOGV_SC LOGV_USC MEAN_NAF;                      ! Effects of SC, USC variabili
+
+  MODEL CONSTRAINT:
+    NEW(diff_beta);                                          ! Compute the difference in eff
+    diff_beta = beta_SC - beta_USC;
+
+  OUTPUT:
+    TECH1 TECH8 CINTERVAL(HPD);                              ! Request output and credible i
+
+
+
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+    NAMES = user_num day_win LOGV_SC LOGV_USC MEAN_NAF DERS;  ! Names of variables in the .da
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+    USEVARIABLES = LOGV_SC LOGV_USC MEAN_NAF DERS;            ! Variables used in the analysi
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+    TYPE = TWOLEVEL RANDOM;                                  ! Multilevel random effects mode
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+      DERS ON LOGV_SC (beta_SC);                             ! Effect of SC variability on DE
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+      DERS ON LOGV_USC (beta_USC);                           ! Effect of USC variability on D
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+      DERS ON LOGV_SC LOGV_USC MEAN_NAF;                      ! Effects of SC, USC variabilit
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+    NEW(diff_beta);                                          ! Compute the difference in effe
+*** WARNING
+  Input line exceeded 90 characters. Some input may be truncated.
+    TECH1 TECH8 CINTERVAL(HPD);                              ! Request output and credible in
+*** WARNING in MODEL command
+  TYPE=RANDOM is used to declare random effect variables in the model.
+  No random effect variables were found.  TYPE=RANDOM will be ignored.
+*** WARNING
+  One or more individual-level variables have no variation within a
+  cluster for the following clusters.
+
+     Variable   Cluster IDs with no within-cluster variation
+
+      MEAN_NAF    128
+      DERS        160 175 308 174 47 191 162 144 150 177 180 234 272 284 128 18 129 6 209 15 247
+                  268 120 121 122 322 4 100 106 111 117 118 3 23 123 32 33 38 131 133 135 39 148
+                  42 7 168 172 49 52 185 187 188 63 192 194 195 196 198 199 200 204 205 206 66
+                  210 211 220 73 228 229 230 231 74 240 241 242 243 245 246 77 255 257 264 266
+                  83 271 86 275 276 279 281 282 87 285 287 88 304 91 314 319 94 325 326 11 12
+                  40 41 125 13 127 43 14 130 45 132 46 134 5 136 137 138 139 140 141 142 143 48
+                  145 146 147 16 149 151 152 153 154 155 156 157 158 159 51 161 1 163 164 165
+                  167 169 170 171 54 173 55 57 176 58 178 179 59 181 182 183 184 60 186 2 62 189
+                  190 64 193 65 21 67 197 68 69 70 201 202 71 72 22 8 207 208 75 76 212 213 214
+                  215 216 218 219 78 221 222 223 79 225 226 227 80 81 82 25 233 84 235 236 237
+                  238 239 85 27 28 244 89 90 29 248 249 250 251 252 253 254 92 256 93 258 30 260
+                  261 262 263 95 265 96 267 97 98 270 31 9 273 274 102 278 103 104 105 10 283
+                  107 108 286 109 110 289 290 291 293 294 295 296 34 299 112 301 302 303 113 305
+                  306 307 114 309 310 311 312 313 115 315 316 317 318 116 320 321 35 323 324 36
+                  119 56 298
+
+  10 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+Comparing the effects of SC and USC variability on DERS with Negative Affect;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2759
+
+Number of dependent variables                                    1
+Number of independent variables                                  3
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Continuous
+   DERS
+
+Observed independent variables
+   LOGV_SC     LOGV_USC    MEAN_NAF
+
+Variables with special functions
+
+  Cluster variable      USER_NUM
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               3
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.500D-01
+  Maximum number of iterations                              100000
+  K-th iteration used for thinning                               1
+
+Input data file(s)
+  ema_daily_data.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of clusters                        326
+
+       Size (s)    Cluster ID with Size s
+
+          3        160 175
+          4        308
+          5        174 47 191 162
+          6        144 150 177 180 99 234 272 284 297 128
+          7        18 129 6 209 224 15 247 268 120 121 122 124 322
+          8        4 100 106 111 117 118 3 19 23 123 32 126 33 38 131 133
+                   135 39 148 42 44 7 168 172 49 50 52 61 185 187 188 63
+                   192 194 195 196 198 199 200 203 204 205 206 66 210 211
+                   220 73 228 229 230 231 74 240 241 242 243 245 246 77
+                   255 257 259 264 266 83 269 271 86 275 276 279 280 281
+                   282 87 285 287 288 88 300 304 91 314 319 94 325 326
+          9        37 11 12 40 41 125 13 127 43 14 130 45 132 46 134 5
+                   136 137 138 139 140 141 142 143 48 145 146 147 16 149
+                   17 151 152 153 154 155 156 157 158 159 51 161 1 163
+                   164 165 166 167 53 169 170 171 54 173 55 57 176 58 178
+                   179 59 181 182 183 184 60 186 2 62 189 190 20 64 193
+                   65 21 67 197 68 69 70 201 202 71 72 22 8 207 208 75
+                   76 24 212 213 214 215 216 217 218 219 78 221 222 223
+                   79 225 226 227 80 81 82 25 232 233 84 235 236 237 238
+                   239 85 26 27 28 244 89 90 29 248 249 250 251 252 253
+                   254 92 256 93 258 30 260 261 262 263 95 265 96 267 97
+                   98 270 31 9 273 274 101 102 277 278 103 104 105 10 283
+                   107 108 286 109 110 289 290 291 292 293 294 295 296
+                   34 299 112 301 302 303 113 305 306 307 114 309 310 311
+                   312 313 115 315 316 317 318 116 320 321 35 323 324 36
+                   119
+         10        56 298
+
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     LOGV_SC              -2.441      -2.313     -11.513    6.23%      -3.251     -2.281     -1.864
+            2759.000       7.108       5.544       1.738    0.04%      -1.458     -0.695
+     LOGV_USC             -2.266      -2.610     -11.513    3.81%      -3.222     -2.188     -1.839
+            2759.000       4.975       8.532       1.282    0.04%      -1.528     -0.785
+     MEAN_NAF             -2.279       0.310      -8.000    1.92%      -5.000     -3.250     -2.400
+            2759.000       9.132      -0.251       8.000    0.11%      -1.600      0.400
+     DERS                  0.000       0.344      -1.776    0.65%      -0.923     -0.354     -0.070
+            2759.000       1.000      -0.579       2.774    0.58%       0.215      0.865
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                              18
+
+Bayesian Posterior Predictive Checking using Chi-Square
+
+          95% Confidence Interval for the Difference Between
+          the Observed and the Replicated Chi-Square Values
+
+                                419.257           503.917
+
+          Posterior Predictive P-Value              0.000
+
+Information Criteria
+
+          Deviance (DIC)                        31409.906
+          Estimated Number of Parameters (pD)    1113.456
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within Level
+
+ DERS       ON
+    LOGV_SC            0.000       0.001      0.319      -0.002       0.001
+    LOGV_USC          -0.001       0.001      0.162      -0.003       0.001
+    MEAN_NAF           0.004       0.001      0.000       0.003       0.006      *
+
+ Variances
+    LOGV_SC            4.873       0.142      0.000       4.593       5.146      *
+    LOGV_USC           3.683       0.105      0.000       3.482       3.891      *
+    MEAN_NAF           4.580       0.130      0.000       4.330       4.839      *
+
+ Residual Variances
+    DERS               0.008       0.000      0.000       0.008       0.009      *
+
+Between Level
+
+ DERS       ON
+    LOGV_SC            0.078       0.049      0.054      -0.017       0.176
+    LOGV_USC          -0.038       0.065      0.284      -0.157       0.097
+    MEAN_NAF           0.263       0.024      0.000       0.213       0.308      *
+
+ Means
+    LOGV_SC           -2.437       0.094      0.000      -2.621      -2.251      *
+    LOGV_USC          -2.270       0.075      0.000      -2.420      -2.131      *
+    MEAN_NAF          -2.267       0.127      0.000      -2.526      -2.028      *
+
+ Intercepts
+    DERS               0.707       0.117      0.000       0.466       0.929      *
+
+ Variances
+    LOGV_SC            2.301       0.231      0.000       1.882       2.771      *
+    LOGV_USC           1.341       0.144      0.000       1.078       1.638      *
+    MEAN_NAF           4.661       0.421      0.000       3.887       5.524      *
+
+ Residual Variances
+    DERS               0.654       0.056      0.000       0.553       0.770      *
+
+New/Additional Parameters
+    DIFF_BET           0.001       0.002      0.352      -0.003       0.004
+
+
+CREDIBILITY INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Within Level
+
+ DERS     ON
+    LOGV_SC         -0.003      -0.002      -0.002       0.000       0.001       0.001       0.002
+    LOGV_USC        -0.004      -0.003      -0.003      -0.001       0.001       0.001       0.002
+    MEAN_NAF         0.002       0.003       0.003       0.004       0.006       0.006       0.007
+
+ Variances
+    LOGV_SC          4.517       4.593       4.633       4.873       5.100       5.146       5.240
+    LOGV_USC         3.416       3.482       3.505       3.683       3.846       3.891       3.961
+    MEAN_NAF         4.240       4.330       4.374       4.580       4.798       4.839       4.911
+
+ Residual Variances
+    DERS             0.008       0.008       0.008       0.008       0.009       0.009       0.009
+
+Between Level
+
+ DERS     ON
+    LOGV_SC         -0.058      -0.017       0.000       0.078       0.160       0.176       0.199
+    LOGV_USC        -0.202      -0.157      -0.142      -0.038       0.072       0.097       0.136
+    MEAN_NAF         0.202       0.213       0.222       0.263       0.301       0.308       0.326
+
+ Means
+    LOGV_SC         -2.686      -2.621      -2.596      -2.437      -2.287      -2.251      -2.203
+    LOGV_USC        -2.454      -2.420      -2.393      -2.270      -2.149      -2.131      -2.071
+    MEAN_NAF        -2.612      -2.526      -2.485      -2.267      -2.068      -2.028      -1.951
+
+ Intercepts
+    DERS             0.412       0.466       0.516       0.707       0.901       0.929       0.997
+
+ Variances
+    LOGV_SC          1.764       1.882       1.951       2.301       2.703       2.771       2.925
+    LOGV_USC         0.999       1.078       1.120       1.341       1.589       1.638       1.729
+    MEAN_NAF         3.676       3.887       4.014       4.661       5.370       5.524       5.842
+
+ Residual Variances
+    DERS             0.521       0.553       0.570       0.654       0.750       0.770       0.811
+
+New/Additional Parameters
+    DIFF_BET        -0.004      -0.003      -0.002       0.001       0.003       0.004       0.005
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR WITHIN
+
+
+           NU
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+                    0             0             0             0
+
+
+           LAMBDA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC            0             0             0             0
+ LOGV_USC           0             0             0             0
+ MEAN_NAF           0             0             0             0
+ DERS               0             0             0             0
+
+
+           THETA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC            0
+ LOGV_USC           0             0
+ MEAN_NAF           0             0             0
+ DERS               0             0             0             0
+
+
+           ALPHA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+                    0             0             0             0
+
+
+           BETA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC            0             0             0             0
+ LOGV_USC           0             0             0             0
+ MEAN_NAF           0             0             0             0
+ DERS               1             2             3             0
+
+
+           PSI
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC            4
+ LOGV_USC           0             5
+ MEAN_NAF           0             0             6
+ DERS               0             0             0             7
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN
+
+
+           NU
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+                    0             0             0             0
+
+
+           LAMBDA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC            0             0             0             0
+ LOGV_USC           0             0             0             0
+ MEAN_NAF           0             0             0             0
+ DERS               0             0             0             0
+
+
+           THETA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC            0
+ LOGV_USC           0             0
+ MEAN_NAF           0             0             0
+ DERS               0             0             0             0
+
+
+           ALPHA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+                    8             9            10            11
+
+
+           BETA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC            0             0             0             0
+ LOGV_USC           0             0             0             0
+ MEAN_NAF           0             0             0             0
+ DERS              12            13            14             0
+
+
+           PSI
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC           15
+ LOGV_USC           0            16
+ MEAN_NAF           0             0            17
+ DERS               0             0             0            18
+
+
+     PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              DIFF_BET
+              ________
+                   19
+
+
+     STARTING VALUES FOR WITHIN
+
+
+           NU
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC        1.000         0.000         0.000         0.000
+ LOGV_USC       0.000         1.000         0.000         0.000
+ MEAN_NAF       0.000         0.000         1.000         0.000
+ DERS           0.000         0.000         0.000         1.000
+
+
+           THETA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC        0.000
+ LOGV_USC       0.000         0.000
+ MEAN_NAF       0.000         0.000         0.000
+ DERS           0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           BETA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC        0.000         0.000         0.000         0.000
+ LOGV_USC       0.000         0.000         0.000         0.000
+ MEAN_NAF       0.000         0.000         0.000         0.000
+ DERS           0.000         0.000         0.000         0.000
+
+
+           PSI
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC        3.554
+ LOGV_USC       0.000         2.488
+ MEAN_NAF       0.000         0.000         4.566
+ DERS           0.000         0.000         0.000         0.500
+
+
+     STARTING VALUES FOR BETWEEN
+
+
+           NU
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC        1.000         0.000         0.000         0.000
+ LOGV_USC       0.000         1.000         0.000         0.000
+ MEAN_NAF       0.000         0.000         1.000         0.000
+ DERS           0.000         0.000         0.000         1.000
+
+
+           THETA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC        0.000
+ LOGV_USC       0.000         0.000
+ MEAN_NAF       0.000         0.000         0.000
+ DERS           0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+               -2.441        -2.266        -2.279         0.000
+
+
+           BETA
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC        0.000         0.000         0.000         0.000
+ LOGV_USC       0.000         0.000         0.000         0.000
+ MEAN_NAF       0.000         0.000         0.000         0.000
+ DERS           0.000         0.000         0.000         0.000
+
+
+           PSI
+              LOGV_SC       LOGV_USC      MEAN_NAF      DERS
+              ________      ________      ________      ________
+ LOGV_SC        3.554
+ LOGV_USC       0.000         2.488
+ MEAN_NAF       0.000         0.000         4.566
+ DERS           0.000         0.000         0.000         0.500
+
+
+     STARTING VALUES FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              DIFF_BET
+              ________
+                0.500
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 2~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 3~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 4~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 5~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 6~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 7~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 8~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 9~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 10~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 11~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 12~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 13~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 14~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 15~IG(-1.000,0.000)         infinity            infinity            infinity
+     Parameter 16~IG(-1.000,0.000)         infinity            infinity            infinity
+     Parameter 17~IG(-1.000,0.000)         infinity            infinity            infinity
+     Parameter 18~IG(-1.000,0.000)         infinity            infinity            infinity
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     CHAIN    BSEED
+     1        0
+     2        285380
+     3        253358
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              1.035               12
+     200              1.005               12
+     300              1.011               14
+     400              1.008               14
+     500              1.008               13
+     600              1.012               13
+     700              1.005               13
+     800              1.005               17
+     900              1.002               9
+     1000             1.004               16
+     1100             1.002               13
+     1200             1.005               12
+     1300             1.004               13
+     1400             1.005               15
+     1500             1.005               15
+     1600             1.004               15
+     1700             1.007               15
+     1800             1.004               15
+     1900             1.004               15
+     2000             1.004               15
+     2100             1.004               15
+     2200             1.004               15
+     2300             1.003               15
+     2400             1.002               15
+     2500             1.001               15
+     2600             1.000               15
+     2700             1.000               15
+     2800             1.000               18
+     2900             1.000               15
+     3000             1.000               18
+     3100             1.000               18
+     3200             1.000               16
+     3300             1.000               18
+     3400             1.000               17
+     3500             1.000               17
+     3600             1.001               5
+     3700             1.000               5
+     3800             1.000               9
+     3900             1.000               5
+     4000             1.000               5
+     4100             1.000               16
+     4200             1.000               16
+     4300             1.001               16
+     4400             1.001               16
+     4500             1.001               16
+     4600             1.000               16
+     4700             1.000               16
+     4800             1.000               16
+     4900             1.000               16
+     5000             1.000               16
+
+
+     Beginning Time:  11:00:27
+        Ending Time:  11:00:32
+       Elapsed Time:  00:00:05
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2021 Muthen & Muthen

@@ -1,0 +1,44 @@
+TITLE: Conditional model focusing on CMP variability;
+
+DATA:
+  FILE = ema_data.dat;
+
+VARIABLE:
+  NAMES = user_num day_win time_win CMP NEGAFF DERS;
+  USEVARIABLES = CMP NEGAFF DERS;
+  CLUSTER = user_num;          ! Numeric user ID for Level-2 clustering
+  WITHIN = NEGAFF;             ! Declare NEGAFF as a within-level variable
+  BETWEEN = DERS;              ! DERS as a Level-2 predictor
+
+ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;      ! Multilevel random effects model
+  ESTIMATOR = BAYES;           ! Bayesian estimation
+  CHAINS = 3;                  ! Number of MCMC chains
+  BITERATIONS = 100000 (5000); ! Maximum iterations and burn-in
+  PROCESSORS = 2;              ! Parallel computation
+  ALGORITHM = GIBBS(RW);       ! Use Gibbs sampling with random walk
+
+MODEL:
+  %WITHIN%
+    LOGV | CMP;                ! Log residual variance modeled as random coefficients
+    CMP ON NEGAFF (beta1);     ! Predict CMP using Negative Affect within subjects
+
+  %BETWEEN%
+    CMP (phi_0);               ! Between-level variance of CMP
+    LOGV (phi_1);              ! Between-level variance of log residual variance
+    DERS ON CMP LOGV (beta2 beta3); ! Predict DERS with average CMP and variability
+
+MODEL PRIORS:
+    phi_0 ~ IG(1, 0.1);        ! Informative inverse-gamma prior for variance of average CMP
+    phi_1 ~ IG(1, 0.1);        ! Informative inverse-gamma prior for variance of variability
+    beta1 ~ N(0, 1);           ! Informative prior for beta1
+    beta2 ~ N(0, 1);           ! Informative prior for beta2
+    beta3 ~ N(0, 1);           ! Informative prior for beta3
+
+MODEL CONSTRAINT:
+  NEW (mean_v var_v);          ! Derived parameters for within-level residual variance
+  mean_v = exp(-1 + (1/2)*phi_1); ! Mean of the within-level variance (adjusted intercept)
+  var_v = exp(2*(-1) + phi_1)*(exp(phi_1)-1); ! Variance of the within-level variance
+
+OUTPUT:
+  TECH8 CINTERVAL(HPD);        ! Request iteration history and HPD intervals

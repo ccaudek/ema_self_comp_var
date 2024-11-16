@@ -1,0 +1,34 @@
+TITLE: Comparing the effects of SC and USC variability on DERS;
+
+DATA:
+  FILE = ema_daily_data.dat;               ! Input the daily data file
+  VARIABLE:
+    NAMES = user_num day_win LOGV_SC LOGV_USC DERS;  ! Names of variables in the .dat file
+    USEVARIABLES = LOGV_SC LOGV_USC DERS;            ! Variables used in the analysis
+    CLUSTER = user_num;                              ! Cluster by user (Level-2)
+
+ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;                            ! Multilevel random effects model
+  ESTIMATOR = BAYES;                                 ! Use Bayesian estimation
+  CHAINS = 3;                                        ! Number of MCMC chains
+  BITERATIONS = 100000 (5000);                       ! Max iterations and burn-in
+  PROCESSORS = 2;                                    ! Parallel processing for speed
+
+MODEL:
+  %WITHIN%
+    ! Specify within-level relationships
+    DERS ON LOGV_SC (beta_SC);                      ! Effect of SC variability on DERS
+    DERS ON LOGV_USC (beta_USC);                    ! Effect of USC variability on DERS
+
+  %BETWEEN%
+    ! Specify between-level relationships
+    LOGV_SC (phi_SC);                               ! Between-level variance of SC fluctuations
+    LOGV_USC (phi_USC);                             ! Between-level variance of USC fluctuations
+    DERS ON LOGV_SC LOGV_USC;                       ! Effects of SC and USC variability on DERS
+
+MODEL CONSTRAINT:
+  NEW(diff_beta);                                   ! Compute the difference in effects
+  diff_beta = beta_SC - beta_USC;
+
+OUTPUT:
+  TECH1 TECH8 CINTERVAL(BCBOOT);                    ! Request output and credible intervals

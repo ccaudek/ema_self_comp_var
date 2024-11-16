@@ -1,0 +1,54 @@
+TITLE: Multilevel mediation model: SC/USC variability, NAF, and DERS;
+
+DATA:
+  FILE = ema_daily_data.dat;               ! Input the daily data file
+
+VARIABLE:
+  NAMES = user_num day_win LOGV_SC LOGV_USC MEAN_NAF DERS;  
+  USEVARIABLES = LOGV_SC LOGV_USC MEAN_NAF DERS;
+  CLUSTER = user_num;                      ! Cluster by user (Level-2)
+
+ANALYSIS:
+  TYPE = TWOLEVEL;                         ! Multilevel model
+  ESTIMATOR = BAYES;                       ! Bayesian estimation for mediation
+  CHAINS = 3;                              ! Number of MCMC chains
+  BITERATIONS = 100000 (5000);             ! Max iterations and burn-in
+  PROCESSORS = 2;                          ! Use multiple cores
+
+MODEL:
+  %WITHIN%
+    MEAN_NAF ON LOGV_SC (a1w);             ! Effect of SC variability on NAF (within)
+    MEAN_NAF ON LOGV_USC (a2w);            ! Effect of USC variability on NAF (within)
+    DERS ON MEAN_NAF (b1w);                ! Effect of NAF on DERS (within)
+    DERS ON LOGV_SC (c1w);                 ! Direct effect of SC variability on DERS (within)
+    DERS ON LOGV_USC (c2w);                ! Direct effect of USC variability on DERS (within)
+
+  %BETWEEN%
+    MEAN_NAF ON LOGV_SC (a1b);             ! Effect of SC variability on NAF (between)
+    MEAN_NAF ON LOGV_USC (a2b);            ! Effect of USC variability on NAF (between)
+    DERS ON MEAN_NAF (b1b);                ! Effect of NAF on DERS (between)
+    DERS ON LOGV_SC (c1b);                 ! Direct effect of SC variability on DERS (between)
+    DERS ON LOGV_USC (c2b);                ! Direct effect of USC variability on DERS (between)
+
+MODEL CONSTRAINT:
+  NEW(indirect_within_SC indirect_within_USC total_within_SC total_within_USC);
+  NEW(indirect_between_SC indirect_between_USC total_between_SC total_between_USC);
+
+  ! Indirect effects (within)
+  indirect_within_SC = a1w * b1w;
+  indirect_within_USC = a2w * b1w;
+
+  ! Indirect effects (between)
+  indirect_between_SC = a1b * b1b;
+  indirect_between_USC = a2b * b1b;
+
+  ! Total effects (within)
+  total_within_SC = c1w + indirect_within_SC;
+  total_within_USC = c2w + indirect_within_USC;
+
+  ! Total effects (between)
+  total_between_SC = c1b + indirect_between_SC;
+  total_between_USC = c2b + indirect_between_USC;
+
+OUTPUT:
+  TECH1 TECH8 CINTERVAL(HPD);              ! Request output and credible intervals
